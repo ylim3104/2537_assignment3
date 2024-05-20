@@ -6,6 +6,21 @@ let currentPage = 1;
 let pokemons = [];
 let totalPages;
 
+const updatePokeType = async (pokemonsTypes) => {
+  $("#pokeTypes").empty();
+  pokemonsTypes.forEach(async (type) => {
+    const res = await axios.get(type.url);
+    $("#pokeTypes").append(`
+      <div class="pokeType form-check" data-typenum="${res.data.id}">
+        <input class="form-check-input" type="checkbox" value="">
+        <label class="form-check-label bodyText" for="flexCheckDefault">
+          ${res.data.name.toUpperCase()}
+        </label>
+      </div>
+    `);
+  });
+};
+
 const updatePokeNum = (currentPage, PAGE_SIZE, pokemons) => {
   selected_pokemons = pokemons.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -57,6 +72,12 @@ const paginate = async (currentPage, PAGE_SIZE, pokemons) => {
 };
 
 const setup = async () => {
+  //show pokemon's type checkboxes
+  $("#pokeTypes").empty();
+  let responseType = await axios.get(`https://pokeapi.co/api/v2/type`);
+  pokemonsTypes = responseType.data.results;
+  updatePokeType(pokemonsTypes);
+  
   // test out poke api using axios here
   $("#pokeCards").empty();
   let response = await axios.get(

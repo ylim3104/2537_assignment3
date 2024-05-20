@@ -6,6 +6,12 @@ body {
     color: black;
 }
 
+.form-check {
+    display: inline-block;
+    margin: 1px 10px 0px 10px;
+}
+
+#pokeType,
 #pokeCards,
 #pagination {
     margin: 30px 20px 30px 20px;
