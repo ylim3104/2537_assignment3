@@ -1,12 +1,18 @@
 const PAGE_SIZE = 10;
+let startPage = 1;
+let endPage = 5;
 let currentPage = 1;
 let pokemons = [];
 let totalPages;
 
-const updatePaginationDiv = (currentPage, totalPages) => {
+const updatePaginationDiv = (currentPage, startPage, endPage) => {
   $("#pagination").empty();
-  for (let i = 1; i <= totalPages; i++) {
-    $("#pagination").append(`<button class="btn btn-secondary page ml-1 numberedButtons ${i === currentPage ? "active" : ""}" value="${i}">${i}</button>`);
+  for (let i = startPage; i <= endPage; i++) {
+    $("#pagination").append(
+      `<button class="btn btn-secondary page ml-1 numberedButtons ${
+        i === currentPage ? "active" : ""
+      }" value="${i}">${i}</button>`
+    );
   }
 };
 
@@ -39,8 +45,7 @@ const setup = async () => {
   pokemons = response.data.results;
   paginate(currentPage, PAGE_SIZE, pokemons);
   totalPages = Math.ceil(pokemons.length / PAGE_SIZE);
-  updatePaginationDiv(currentPage, totalPages);
-
+  updatePaginationDiv (currentPage, startPage, endPage);
   // pop up modal when clicking on a pokemon card
   // add event listener to each pokemon card
   $("body").on("click", ".pokeCard", async function (e) {
@@ -91,7 +96,7 @@ const setup = async () => {
     currentPage = Number(e.target.value);
     await paginate(currentPage, PAGE_SIZE, pokemons);
     //update pagination buttons
-    updatePaginationDiv(currentPage, totalPages);
+    updatePaginationDiv (currentPage, startPage, endPage);
   });
 };
 
