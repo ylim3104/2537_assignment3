@@ -73,9 +73,6 @@ const typePaginate = async (
   pokemons,
   selectedTypes
 ) => {
-  currentPage = 1;
-  startPage = 1;
-  endPage = 5;
   $("#pokeCards").empty();
   if (selectedTypes.length === 0) {
     filteredPokemons = pokemons;
@@ -181,6 +178,9 @@ const setup = async () => {
     "change",
     ".pokeType input[type='checkbox']",
     async function (e) {
+      currentPage = 1;
+      startPage = 1;
+      endPage = 5;
       selectedTypes = [];
       $(".pokeType input[type='checkbox']:checked").each(function () {
         const pokemonType = $(this).closest(".pokeType").data("typenum");
@@ -195,9 +195,6 @@ const setup = async () => {
         await typePaginate(currentPage, PAGE_SIZE, pokemons, resTypeData);
       } else {
         totalPages = Math.ceil(pokemons.length / PAGE_SIZE);
-        currentPage = 1;
-        startPage = 1;
-        endPage = 5;
         await paginate(currentPage, PAGE_SIZE, pokemons);
         updatePaginationDiv(currentPage, totalPages, startPage, endPage);
         updatePokeNum(currentPage, PAGE_SIZE, pokemons, pokemons);
