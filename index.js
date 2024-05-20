@@ -1,8 +1,22 @@
+const PAGE_SIZE = 10;
+let currentPage = 1;
 let pokemons = [];
+let totalPages;
 
-const paginate = async (pokemons) => {
+const updatePaginationDiv = (currentPage, totalPages) => {
+  $("#pagination").empty();
+  for (let i = 1; i <= totalPages; i++) {
+    $("#pagination").append(`<button class="btn btn-secondary page ml-1 numberedButtons ${i === currentPage ? "active" : ""}" value="${i}">${i}</button>`);
+  }
+};
+
+const paginate = async (currentPage, PAGE_SIZE, pokemons) => {
   $("#pokeCards").empty();
-  pokemons.forEach(async (pokemon) => {
+  selected_pokemons = pokemons.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+  selected_pokemons.forEach(async (pokemon) => {
     const res = await axios.get(pokemon.url);
     $("#pokeCards").append(`
       <div class="pokeCard card" pokeName=${res.data.name}   >
@@ -23,7 +37,9 @@ const setup = async () => {
     "https://pokeapi.co/api/v2/pokemon?offset=0&limit=1302"
   );
   pokemons = response.data.results;
-  paginate(pokemons);
+  paginate(currentPage, PAGE_SIZE, pokemons);
+  totalPages = Math.ceil(pokemons.length / PAGE_SIZE);
+  updatePaginationDiv(currentPage, totalPages);
 
   // pop up modal when clicking on a pokemon card
   // add event listener to each pokemon card
@@ -68,6 +84,14 @@ const setup = async () => {
         <h2>${res.data.name.toUpperCase()}</h2>
         <h5>${res.data.id}</h5>
         `);
+  });
+
+  // add event listener to pagination buttons
+  $("body").on("click", ".numberedButtons", async function (e) {
+    currentPage = Number(e.target.value);
+    await paginate(currentPage, PAGE_SIZE, pokemons);
+    //update pagination buttons
+    updatePaginationDiv(currentPage, totalPages);
   });
 };
 

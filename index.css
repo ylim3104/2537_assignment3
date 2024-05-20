@@ -6,19 +6,12 @@ body {
     color: black;
 }
 
-#pokeType,
 #pokeCards,
 #pagination {
     margin: 30px 20px 30px 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-}
-
-#pokeNum {
-    margin: 30px 0px 30px 50px;
-    display: flex;
-    flex-wrap: wrap;
 }
 
 .pokeCard {
