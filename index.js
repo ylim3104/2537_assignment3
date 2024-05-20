@@ -1,18 +1,26 @@
 const PAGE_SIZE = 10;
+const NUM_PAGE = 5;
 let startPage = 1;
 let endPage = 5;
 let currentPage = 1;
 let pokemons = [];
 let totalPages;
 
-const updatePaginationDiv = (currentPage, startPage, endPage) => {
+const updatePaginationDiv = (currentPage, totalPages, startPage, endPage) => {
   $("#pagination").empty();
   for (let i = startPage; i <= endPage; i++) {
-    $("#pagination").append(
-      `<button class="btn btn-secondary page ml-1 numberedButtons ${
-        i === currentPage ? "active" : ""
-      }" value="${i}">${i}</button>`
-    );
+    if (i == startPage && i != 1) {
+      $("#pagination").append(`
+        <button id="previous" class="btn btn-secondary page ml-1">Previous</button>`);
+    }
+    $("#pagination").append(`
+    <button class="btn btn-secondary page ml-1 numberedButtons ${
+      i === currentPage ? "active" : ""
+    }" value="${i}">${i}</button>`);
+    if (i == endPage && i < totalPages) {
+      $("#pagination").append(`
+      <button id="next" class="btn btn-secondary page ml-1">Next</button>`);
+    }
   }
 };
 
@@ -45,7 +53,8 @@ const setup = async () => {
   pokemons = response.data.results;
   paginate(currentPage, PAGE_SIZE, pokemons);
   totalPages = Math.ceil(pokemons.length / PAGE_SIZE);
-  updatePaginationDiv (currentPage, startPage, endPage);
+  const lastPages = Math.ceil(pokemons.length / PAGE_SIZE) % NUM_PAGE;
+  updatePaginationDiv(currentPage, totalPages, startPage, endPage);
   // pop up modal when clicking on a pokemon card
   // add event listener to each pokemon card
   $("body").on("click", ".pokeCard", async function (e) {
@@ -96,7 +105,27 @@ const setup = async () => {
     currentPage = Number(e.target.value);
     await paginate(currentPage, PAGE_SIZE, pokemons);
     //update pagination buttons
-    updatePaginationDiv (currentPage, startPage, endPage);
+    updatePaginationDiv(currentPage, totalPages, startPage, endPage);
+  });
+
+  $("body").on("click", "#previous", async function (e) {
+    startPage -= NUM_PAGE;
+    if (endPage == totalPages) {
+      endPage -= lastPages;
+    } else {
+      endPage -= NUM_PAGE;
+    }
+    updatePaginationDiv(currentPage, totalPages, startPage, endPage);
+  });
+
+  $("body").on("click", "#next", async function (e) {
+    startPage += NUM_PAGE;
+    if (endPage == totalPages - lastPages) {
+      endPage += lastPages;
+    } else {
+      endPage += NUM_PAGE;
+    }
+    updatePaginationDiv(currentPage, totalPages, startPage, endPage);
   });
 };
 
