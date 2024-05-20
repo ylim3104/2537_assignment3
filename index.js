@@ -6,6 +6,18 @@ let currentPage = 1;
 let pokemons = [];
 let totalPages;
 
+const updatePokeNum = (currentPage, PAGE_SIZE, pokemons) => {
+  selected_pokemons = pokemons.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+  $("#pokeNum").empty();
+    $("#pokeNum").append(`
+      <h2 class="bodyText">
+        Showing ${selected_pokemons.length} of ${pokemons.length} pokemons
+      </h1>`);
+};
+
 const updatePaginationDiv = (currentPage, totalPages, startPage, endPage) => {
   $("#pagination").empty();
   for (let i = startPage; i <= endPage; i++) {
@@ -54,6 +66,7 @@ const setup = async () => {
   paginate(currentPage, PAGE_SIZE, pokemons);
   totalPages = Math.ceil(pokemons.length / PAGE_SIZE);
   const lastPages = Math.ceil(pokemons.length / PAGE_SIZE) % NUM_PAGE;
+  updatePokeNum(currentPage, PAGE_SIZE, pokemons);
   updatePaginationDiv(currentPage, totalPages, startPage, endPage);
   // pop up modal when clicking on a pokemon card
   // add event listener to each pokemon card
@@ -106,6 +119,7 @@ const setup = async () => {
     await paginate(currentPage, PAGE_SIZE, pokemons);
     //update pagination buttons
     updatePaginationDiv(currentPage, totalPages, startPage, endPage);
+    updatePokeNum(currentPage, PAGE_SIZE, pokemons);
   });
 
   $("body").on("click", "#previous", async function (e) {
